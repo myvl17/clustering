@@ -70,7 +70,7 @@ def knnCPU(R,Q,k):
         ds[blocks*blockSize:N,:] = dst[0:k,:].T
         inds[blocks*blockSize:N,:] = indst[0:k,:].T
         
-    ds = np.real(np.sqrt(ds+0j))# CHANGE TO BETTER FUNCTION?
+    ds = np.sqrt(np.absolute(ds))# CHANGE TO BETTER FUNCTION?
     inds = inds.astype(int)
     return ds, inds
     #return inds
@@ -79,40 +79,40 @@ def knnCPU(R,Q,k):
 
 # -*- coding: utf-8 -*-
 
-def VBDM(x,k,k2,nvars,operator,adhocEpsilon):
-### Inputs
-    ### x       - N-by-n data set with N data points in R^n
-    ### k       - number of nearest neighbors to use
-    ### k2      - number of nearest neighbors to use to determine the "epsilon"
-    ###             parameter
-    ### nvars   - number of eigenfunctions/eigenvalues to compute
-    ### operator- 1 - Laplace-Beltrami operator, 2 - Kolmogorov backward operator 
-    ### dim     - intrinsic dimension of the manifold lying inside R^n
-    ### epsilon - optionally choose an arbitrary "global" epsilon
-    
-### Outputs
-    ### q       - Eigenfunctions of the generator/Laplacian
-    ### b       - Eigenvalues
-    ### epsilon - scale, derived from the k2 nearest neighbors
-    ### peqoversample - Invariant measure divided by the sampling measure
-    ### peq     - Invariant measure
-    ### qest    - Sampling measure
-
-    ### Theory requires c2 = 1/2 - 2*alpha + 2*dim*alpha + dim*beta/2 + beta < 0 
-    ### The resulting operator will have c1 = 2 - 2*alpha + dim*beta + 2*beta
-    ### Thus beta = (c1/2 - 1 + alpha)/(dim/2+1), since we want beta<0,
-    ### natural choices are beta=-1/2 or beta = -1/(dim/2+1)
-
-    N = np.shape(x) #number of points
-    N = N[0]
-    
-    d,inds = knnCPU(x,x,k)
-
-    ### Build ad hoc bandwidth function by autotuning epsilon for each pt.
-    
-    epss = 2**np.arange(-30,31,0.1)
-
-    rho0 = np.sqrt(np.mean(d[:,1:k2]**2,axis=1))
+#def VBDM(x,k,k2,nvars,operator,adhocEpsilon):
+#### Inputs
+#    ### x       - N-by-n data set with N data points in R^n
+#    ### k       - number of nearest neighbors to use
+#    ### k2      - number of nearest neighbors to use to determine the "epsilon"
+#    ###             parameter
+#    ### nvars   - number of eigenfunctions/eigenvalues to compute
+#    ### operator- 1 - Laplace-Beltrami operator, 2 - Kolmogorov backward operator 
+#    ### dim     - intrinsic dimension of the manifold lying inside R^n
+#    ### epsilon - optionally choose an arbitrary "global" epsilon
+#    
+#### Outputs
+#    ### q       - Eigenfunctions of the generator/Laplacian
+#    ### b       - Eigenvalues
+#    ### epsilon - scale, derived from the k2 nearest neighbors
+#    ### peqoversample - Invariant measure divided by the sampling measure
+#    ### peq     - Invariant measure
+#    ### qest    - Sampling measure
+#
+#    ### Theory requires c2 = 1/2 - 2*alpha + 2*dim*alpha + dim*beta/2 + beta < 0 
+#    ### The resulting operator will have c1 = 2 - 2*alpha + dim*beta + 2*beta
+#    ### Thus beta = (c1/2 - 1 + alpha)/(dim/2+1), since we want beta<0,
+#    ### natural choices are beta=-1/2 or beta = -1/(dim/2+1)
+#
+#    N = np.shape(x) #number of points
+#    N = N[0]
+#    
+#    d,inds = knnCPU(x,x,k)
+#
+#    ### Build ad hoc bandwidth function by autotuning epsilon for each pt.
+#    
+#    epss = 2**np.arange(-30,31,0.1)
+#
+#    rho0 = np.sqrt(np.mean(d[:,1:k2]**2,axis=1))
     
     ### Pre-kernel used with ad hoc bandwidth only for estimating dimension
     ### and sampling density
